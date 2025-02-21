@@ -76,70 +76,13 @@
             transform: scale(1.1);
             box-shadow: 0 4px 10px rgba(0, 212, 255, 0.6);
         }
-        .note {
-            padding: 10px;
-            text-align: left;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 14px;
-            color: #00d4ff;
-        }
-        .entry-page {
-            display: none;
-            max-width: 800px;
-            margin: 20px auto;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 128, 255, 0.6);
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-        .entry-header {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #00d4ff;
-            text-shadow: 0 0 6px rgba(0, 212, 255, 0.8);
-        }
-        .entry-textarea {
-            width: 100%;
-            height: 200px;
-            margin-bottom: 20px;
-            font-size: 16px;
-            padding: 10px;
-            border: 1px solid rgba(0, 128, 255, 0.3);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.6);
-            color: #ffffff;
-        }
-        .back-button {
-            display: inline-block;
-            padding: 10px 15px;
-            background: linear-gradient(135deg, #004e92, #00d4ff);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            text-align: center;
-            transition: background 0.3s ease;
-        }
-        .back-button:hover {
-            background: linear-gradient(135deg, #00d4ff, #004e92);
-        }
     </style>
     <script>
-        let currentMonth = 11; // דצמבר (ינואר הוא 0)
-        let currentYear = 2024;
+        let today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
 
         const monthNames = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
-
-        function getEntries() {
-            const savedEntries = localStorage.getItem('calendarEntries');
-            return savedEntries ? JSON.parse(savedEntries) : {};
-        }
-
-        function saveEntries(entries) {
-            localStorage.setItem('calendarEntries', JSON.stringify(entries));
-        }
 
         function renderCalendar() {
             const header = document.querySelector('.header .month-name');
@@ -156,38 +99,12 @@
             }
 
             for (let day = 1; day <= daysInMonth; day++) {
-                dates.insertAdjacentHTML('beforeend', `<div class="date" ondblclick="openEntryPage(${day})">${day}</div>`);
+                dates.insertAdjacentHTML('beforeend', `<div class="date">${day}</div>`);
             }
-        }
-
-        function openEntryPage(day) {
-            document.querySelector('.calendar').style.display = 'none';
-            const entryPage = document.querySelector('.entry-page');
-            const key = `${currentYear}-${currentMonth + 1}-${day}`;
-
-            const entries = getEntries();
-            entryPage.querySelector('.entry-header').innerText = `יומן ליום ${day}/${currentMonth + 1}/${currentYear}`;
-            const textarea = entryPage.querySelector('.entry-textarea');
-            textarea.value = entries[key] || '';
-            textarea.dataset.key = key;
-
-            textarea.addEventListener('input', () => {
-                const updatedEntries = getEntries();
-                updatedEntries[key] = textarea.value;
-                saveEntries(updatedEntries);
-            });
-
-            entryPage.style.display = 'block';
-        }
-
-        function goBack() {
-            document.querySelector('.entry-page').style.display = 'none';
-            document.querySelector('.calendar').style.display = 'block';
         }
 
         function changeMonth(offset) {
             currentMonth += offset;
-
             if (currentMonth < 0) {
                 currentMonth = 11;
                 currentYear--;
@@ -195,7 +112,6 @@
                 currentMonth = 0;
                 currentYear++;
             }
-
             renderCalendar();
         }
 
@@ -206,7 +122,7 @@
     <div class="calendar">
         <div class="header">
             <span class="month-navigation" onclick="changeMonth(-1)">&#9664;</span>
-            <span class="month-name">דצמבר 2024</span>
+            <span class="month-name"></span>
             <span class="month-navigation" onclick="changeMonth(1)">&#9654;</span>
         </div>
         <div class="days">
@@ -219,14 +135,6 @@
             <div>ש'</div>
         </div>
         <div class="dates"></div>
-        <div class="note">
-            <strong>הערה:</strong> לחץ על תאריך כדי להוסיף רשומת יומן.
-        </div>
-    </div>
-    <div class="entry-page">
-        <div class="entry-header"></div>
-        <textarea class="entry-textarea" placeholder="כתוב כאן את מה שאתה רוצה..."></textarea>
-        <a href="#" class="back-button" onclick="goBack()">חזור</a>
     </div>
 </body>
 </html>
